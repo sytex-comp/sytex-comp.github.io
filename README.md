@@ -10,3 +10,5 @@ For support, contact sytex.comp@gmail.com
 [Terms of Service](./terms-conditions.html)
 
 [Refund Policy](./refund-policy.html)
+
+[Pricing Page](./pricing-page.html)
