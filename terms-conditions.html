@@ -1,105 +1,170 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Conditions - Opteme</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <meta charset='utf-8'>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --text-primary: #f5f5f7;
+            --text-secondary: #8e8e93;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #60a5fa;
+            --border-color: #1c1c1e;
+        }
 
-  <meta name='viewport' content='width=device-width'>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-secondary);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4rem 2rem;
+        }
 
-  <title>Terms &amp; Conditions</title>
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
 
-  <style> 
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding:1.5em; line-height: 1.6; color: #333; } 
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 2.5rem 0 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
 
-    h1, h2 { color: #000; }
+        p {
+            margin-bottom: 1.25rem;
+            font-size: 1.05rem;
+        }
 
-    ul { padding-left: 20px; }
+        strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
 
-  </style>
+        ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.25rem;
+            list-style-type: none;
+        }
 
+        li {
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+
+        li::before {
+            content: "→";
+            position: absolute;
+            left: -1.5rem;
+            color: var(--accent-blue);
+        }
+
+        a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--accent-blue-hover);
+            text-decoration: underline;
+        }
+
+        .footer-note {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 2rem 1.5rem;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
-
 <body>
+    <main class="container">
+        <h1>Terms & Conditions</h1>
 
-  <h1>Terms &amp; Conditions</h1>
+        <p>These terms and conditions apply to the <strong>Opteme</strong> application (herein referred to as the "Application"). Upon downloading or utilizing the Application, you are automatically agreeing to the following terms. It is strongly advised that you thoroughly read and understand these terms prior to using the Application.</p>
 
-  
+        <p>The Application is provided by <strong>Denys Sokolov</strong> (herein referred to as the "Service Provider").</p>
 
-  <p>These terms and conditions apply to the <strong>Opteme</strong> application (herein referred to as the "Application"). Upon downloading or utilizing the Application, you are automatically agreeing to the following terms. It is strongly advised that you thoroughly read and understand these terms prior to using the Application.</p>
+        <h2>Intellectual Property</h2>
+        <p>Unauthorized copying, modification of the Application, any part of the Application, or our trademarks is strictly prohibited. Any attempts to extract the source code of the Application, translate the Application into other languages, or create derivative versions are not permitted. All trademarks, copyrights, database rights, and other intellectual property rights related to the Application remain the property of <strong>Denys Sokolov</strong>.</p>
 
+        <h2>Modifications and Charges</h2>
+        <p>The Service Provider is dedicated to ensuring that the Application is as beneficial and efficient as possible. As such, they reserve the right to modify the Application or charge for services at any time. Any charges for the Application or its services will be clearly communicated to you.</p>
 
+        <h2>Data and Security</h2>
+        <p>The Application stores and processes personal data that you have provided to the Service Provider in order to provide the Service. It is your responsibility to maintain the security of your device. The Service Provider strongly advises against jailbreaking or rooting your phone, as it may expose your device to malware, compromise security features, and cause the Application to malfunction.</p>
 
-  <p>The Application is provided by <strong>Denys Sokolov</strong> (herein referred to as the "Service Provider").</p>
+        <h2>Third-Party Services</h2>
+        <p>The Application utilizes third-party services that have their own Terms and Conditions:</p>
+        <ul>
+            <li><a href="https://www.google.com/analytics/terms/" target="_blank" rel="noopener noreferrer">Google Analytics for Firebase</a></li>
+            <li><a href="https://firebase.google.com/terms/crashlytics" target="_blank" rel="noopener noreferrer">Firebase Crashlytics</a></li>
+        </ul>
 
+        <h2>Connectivity and Liability</h2>
+        <p>Some functions of the Application require an active internet connection. The Service Provider cannot be held responsible if the Application does not function at full capacity due to lack of access to Wi-Fi or data exhaustion. If you use the Application outside of a Wi-Fi area, you accept responsibility for any charges from your mobile provider, including roaming fees.</p>
+        
+        <p>While <strong>Denys Sokolov</strong> strives to ensure the Application is updated and accurate, the Service Provider relies on third parties for information and accepts no liability for any loss, direct or indirect, resulting from your reliance on the Application's functionality.</p>
 
+        <h2>Artificial Intelligence</h2>
+        <p>The Application incorporates Artificial Intelligence (AI) technologies. By using the Application, you acknowledge and agree that AI may be used to process data to deliver specific functionalities.</p>
 
-  <h2>Intellectual Property</h2>
+        <h2>Termination and Updates</h2>
+        <p>The Service Provider may update or cease providing the Application at any time. Upon termination, (a) the rights and licenses granted to you in these terms will end; (b) you must cease using the Application and delete it from your device.</p>
 
-  <p>Unauthorized copying, modification of the Application, any part of the Application, or our trademarks is strictly prohibited. Any attempts to extract the source code of the Application, translate the Application into other languages, or create derivative versions are not permitted. All trademarks, copyrights, database rights, and other intellectual property rights related to the Application remain the property of <strong>Denys Sokolov</strong>.</p>
+        <h2>Changes to These Terms</h2>
+        <p>The Service Provider may periodically update these Terms and Conditions. You are advised to review this page regularly. Changes are effective as of <strong>2026-03-07</strong>.</p>
 
-
-
-  <h2>Modifications and Charges</h2>
-
-  <p>The Service Provider is dedicated to ensuring that the Application is as beneficial and efficient as possible. As such, they reserve the right to modify the Application or charge for services at any time. Any charges for the Application or its services will be clearly communicated to you.</p>
-
-
-
-  <h2>Data and Security</h2>
-
-  <p>The Application stores and processes personal data that you have provided to the Service Provider in order to provide the Service. It is your responsibility to maintain the security of your device. The Service Provider strongly advises against jailbreaking or rooting your phone, as it may expose your device to malware, compromise security features, and cause the Application to malfunction.</p>
-
-
-
-  <h2>Third-Party Services</h2>
-
-  <p>The Application utilizes third-party services that have their own Terms and Conditions:</p>
-
-  <ul>
-
-    <li><a href="https://www.google.com/analytics/terms/" target="_blank" rel="noopener noreferrer">Google Analytics for Firebase</a></li>
-
-    <li><a href="https://firebase.google.com/terms/crashlytics" target="_blank" rel="noopener noreferrer">Firebase Crashlytics</a></li>
-
-  </ul>
-
-
-
-  <h2>Connectivity and Liability</h2>
-
-  <p>Some functions of the Application require an active internet connection. The Service Provider cannot be held responsible if the Application does not function at full capacity due to lack of access to Wi-Fi or data exhaustion. If you use the Application outside of a Wi-Fi area, you accept responsibility for any charges from your mobile provider, including roaming fees.</p>
-
-  
-
-  <p>While <strong>Denys Sokolov</strong> strives to ensure the Application is updated and accurate, the Service Provider relies on third parties for information and accepts no liability for any loss, direct or indirect, resulting from your reliance on the Application's functionality.</p>
-
-
-
-  <h2>Artificial Intelligence</h2>
-
-  <p>The Application incorporates Artificial Intelligence (AI) technologies. By using the Application, you acknowledge and agree that AI may be used to process data to deliver specific functionalities.</p>
-
-
-
-  <h2>Termination and Updates</h2>
-
-  <p>The Service Provider may update or cease providing the Application at any time. Upon termination, (a) the rights and licenses granted to you in these terms will end; (b) you must cease using the Application and delete it from your device.</p>
-
-
-
-  <h2>Changes to These Terms</h2>
-
-  <p>The Service Provider may periodically update these Terms and Conditions. You are advised to review this page regularly. Changes are effective as of <strong>2026-03-07</strong>.</p>
-
-
-
-  <h2>Contact Us</h2>
-
-  <p>If you have any questions about these Terms and Conditions, please contact at <strong>sytex.comp@gmail.com</strong>.</p>
-
+        <div class="footer-note">
+            <p>If you have any questions about these Terms and Conditions, please contact at <a href="mailto:sytex.comp@gmail.com">sytex.comp@gmail.com</a></p>
+        </div>
+    </main>
 </body>
-
 </html>
