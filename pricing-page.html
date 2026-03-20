@@ -1,177 +1,220 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pricing Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Page - Opteme</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --text-primary: #f5f5f7;
+            --text-secondary: #8e8e93;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #60a5fa;
+            --border-color: #1c1c1e;
+        }
 
-body{
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  background:#0f1117;
-  color:white;
-  margin:0;
-  padding:40px;
-  text-align:center;
-}
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-secondary);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4rem 2rem;
+        }
 
-h1{
-  margin-bottom:40px;
-}
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
 
-.pricing{
-  display:flex;
-  justify-content:center;
-  gap:40px;
-  flex-wrap:wrap;
-}
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 3rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-.card{
-  background:#151922;
-  border-radius:16px;
-  padding:35px;
-  width:320px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.35);
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
 
-  display:grid;
-  grid-template-rows:
-    40px   /* badge */
-    40px   /* title */
-    80px   /* price */
-    40px   /* old price */
-    1fr;   /* benefits */
-}
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
 
-.badge{
-  font-size:12px;
-  background:#1f6feb;
-  padding:6px 12px;
-  border-radius:20px;
-  display:inline-block;
-  align-self:center;
-  justify-self:center;
-}
+        .card:hover {
+            border-color: var(--accent-blue);
+        }
 
-.title{
-  font-size:26px;
-  font-weight:bold;
-  align-self:center;
-}
+        .badge {
+            align-self: flex-start;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            margin-bottom: 1.5rem;
+        }
 
-.price{
-  font-size:40px;
-  font-weight:bold;
-  align-self:center;
-}
+        .plan-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
 
-.oldprice{
-  text-decoration:line-through;
-  color:#8b949e;
-  align-self:center;
-}
+        .price-container {
+            margin-bottom: 2rem;
+        }
 
-ul{
-  list-style:none;
-  padding:0;
-  margin-top:10px;
-}
+        .current-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
 
-ul li{
-  padding:10px 0;
-  border-bottom:1px solid rgba(255,255,255,0.08);
-}
+        .billing-cycle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
 
-.footer{
-  margin-top:60px;
-  color:#9aa4b2;
-  font-size:14px;
-  max-width:700px;
-  margin-left:auto;
-  margin-right:auto;
-}
+        .old-price {
+            display: block;
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            text-decoration: line-through;
+            margin-top: -0.25rem;
+        }
 
-a{
-  color:#58a6ff;
-  text-decoration:none;
-}
+        ul {
+            list-style: none;
+            margin-top: 1rem;
+            flex-grow: 1;
+        }
 
-a:hover{
-  text-decoration:underline;
-}
+        li {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
 
-</style>
+        li::before {
+            content: "→";
+            color: var(--accent-blue);
+            margin-right: 0.75rem;
+            font-weight: bold;
+        }
+
+        .footer-note {
+            text-align: center;
+            padding-top: 3rem;
+            border-top: 1px solid var(--border-color);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer-note p {
+            margin-bottom: 1rem;
+            font-size: 0.9375rem;
+        }
+
+        .footer-note strong {
+            color: var(--text-primary);
+        }
+
+        a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--accent-blue-hover);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 2.5rem; }
+            .card { padding: 1.5rem; }
+        }
+    </style>
 </head>
-
 <body>
+    <main class="container">
+        <h1>Pricing Page</h1>
 
-<h1>Pricing Page</h1>
+        <div class="pricing-grid">
+            <div class="card">
+                <span class="badge">Most Popular</span>
+                <h2 class="plan-name">Plus</h2>
+                <div class="price-container">
+                    <span class="current-price">7.99 €</span>
+                    <span class="billing-cycle">/ month</span>
+                    <span class="old-price">14.99 €</span>
+                </div>
+                <ul>
+                    <li>100 credits / month</li>
+                    <li>60+ languages unlocked</li>
+                    <li>33× more translation power</li>
+                    <li>Built for daily use</li>
+                    <li>Best value for regular users</li>
+                </ul>
+            </div>
 
-<div class="pricing">
+            <div class="card">
+                <div style="height: 29px; margin-bottom: 1.5rem;"></div> <h2 class="plan-name">Pro</h2>
+                <div class="price-container">
+                    <span class="current-price">29.99 €</span>
+                    <span class="billing-cycle">/ month</span>
+                </div>
+                <ul>
+                    <li>Unlimited credits</li>
+                    <li>Full 100+ language library</li>
+                    <li>Instant language search</li>
+                    <li>No credit limits</li>
+                    <li>Fastest performance</li>
+                    <li>Designed for professionals</li>
+                </ul>
+            </div>
+        </div>
 
-<div class="card">
-
-<div class="badge">Most Popular</div>
-
-<div class="title">Plus</div>
-
-<div class="price">7.99 € / month</div>
-
-<div class="oldprice">14.99 €</div>
-
-<ul>
-<li>100 credits / month</li>
-<li>60+ languages unlocked</li>
-<li>33× more translation power</li>
-<li>Built for daily use</li>
-<li>Best value for regular users</li>
-</ul>
-
-</div>
-
-<div class="card">
-
-<div></div>
-
-<div class="title">Pro</div>
-
-<div class="price">29.99 € / month</div>
-
-<div></div>
-
-<ul>
-<li>Unlimited credits</li>
-<li>Full 100+ language library</li>
-<li>Instant language search</li>
-<li>No credit limits</li>
-<li>Fastest performance</li>
-<li>Designed for professionals</li>
-</ul>
-
-</div>
-
-</div>
-
-<div class="footer">
-
-<p>
-Purchases are completed inside the Opteme mobile application.  
-Payments are securely processed by Paddle.
-</p>
-
-<p>
-Refund requests may be submitted within 24 hours if the application does not function properly.
-</p>
-
-<p>
-Read our <a href="https://sytex-comp.github.io/refund-policy.html" target="_blank">Refund Policy</a>.
-</p>
-
-<p>
-Contact: sytex.comp@gmail.com
-</p>
-
-</div>
-
+        <footer class="footer-note">
+            <p>Purchases are completed inside the <strong>Opteme</strong> mobile application. Payments are securely processed by <strong>Paddle</strong>, our Merchant of Record.</p>
+            <p>Refund requests may be submitted within 24 hours if the application does not function properly. Read our <a href="https://sytex-comp.github.io/refund-policy.html">Refund Policy</a>.</p>
+            <p>For billing support, contact <a href="mailto:sytex.comp@gmail.com">sytex.comp@gmail.com</a></p>
+        </footer>
+    </main>
 </body>
 </html>
