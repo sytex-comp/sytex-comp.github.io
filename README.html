@@ -1,0 +1,172 @@
+[20-Mar-26 21:49] Sokolov Tymofii: <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opeme - Translate Text From Your Screen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --text-primary: #f5f5f7;
+            --text-secondary: #8e8e93;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #60a5fa;
+            --border-color: #1c1c1e;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo-section {
+            margin-bottom: 3rem;
+        }
+
+        .app-name {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .powered-by {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .powered-by svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .links-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem 2rem;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .links-section a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            position: relative;
+        }
+
+        .links-section a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: var(--accent-blue-hover);
+            transition: width 0.2s ease;
+        }
+
+        .links-section a:hover {
+            color: var(--accent-blue-hover);
+        }
+
+        .links-section a:hover::after {
+            width: 100%;
+        }
+
+        .support-text {
+            margin-top: 3rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .support-text a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .support-text a:hover {
+            color: var(--accent-blue-hover);
+        }
+
+        @media (max-width: 480px) {
+            .app-name {
+                font-size: 2.5rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+            }
+[20-Mar-26 21:49] Sokolov Tymofii: .links-section {
+                gap: 1rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <section class="logo-section">
+            <h1 class="app-name">Opeme</h1>
+            <p class="tagline">OpenAI powered program, translate text directly from your screen</p>
+        </section>
+
+        <nav class="links-section">
+            <a href="https://sytex-comp.github.io/privacy-policy">Privacy Policy</a>
+            <a href="https://sytex-comp.github.io/terms-conditions">Terms of Service</a>
+            <a href="https://sytex-comp.github.io/refund-policy">Refund Policy</a>
+            <a href="https://sytex-comp.github.io/pricing-page">Pricing Page</a>
+        </nav>
+
+        <p class="support-text">For support, contact <a href="mailto:sytex.comp@gmail.com">sytex.comp@gmail.com</a></p>
+    </main>
+</body>
+</html>
