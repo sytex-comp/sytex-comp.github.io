@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pricing Plans - Restockr</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,23 +11,14 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --bg-primary: #050505;
-            --bg-secondary: #0b0b0d;
-            --bg-card: #121215;
-            --text-primary: #f5f5f7;
-            --text-secondary: #9ea0a5;
-            --accent-blue: #0056b3;
-            --accent-blue-hover: #1e88e5;
-            --border-color: #1e1e24;
-            --glow-color: rgba(30, 91, 179, 0.15);
-        }
-
         body {
-            font-family: 'Space Grotesk', sans-serif;
-            background-color: var(--bg-primary);
-            background-image: radial-gradient(circle at 50% 0%, var(--glow-color) 0%, transparent 60%);
-            color: var(--text-secondary);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #000000;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #ADB5BD;
             line-height: 1.6;
             display: flex;
             flex-direction: column;
@@ -41,12 +29,6 @@
         .container {
             max-width: 900px;
             width: 100%;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .back-nav {
@@ -55,94 +37,84 @@
         }
 
         .back-nav a {
-            color: var(--text-secondary);
+            color: #ADB5BD;
             text-decoration: none;
             font-size: 0.9rem;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-weight: 600;
             transition: color 0.2s ease;
         }
 
         .back-nav a:hover {
-            color: var(--accent-blue-hover);
+            color: #0056b3;
         }
 
         h1 {
             font-size: 3.5rem;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: -0.03em;
-            margin-bottom: 3.5rem;
+            margin-bottom: 3rem;
             text-align: center;
-            background: linear-gradient(135deg, #ffffff 30%, #9ea0a5 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #FFFFFF;
         }
 
         .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2.25rem;
-            margin-bottom: 4.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
         }
 
         .card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
+            background-color: #1E1E1E;
+            border: 1px solid #333333;
             border-radius: 24px;
-            padding: 2.75rem;
+            padding: 2.5rem;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+            transition: border-color 0.2s ease;
         }
 
         .card:hover {
-            border-color: var(--accent-blue-hover);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(30, 91, 179, 0.08);
+            border-color: #0056b3;
         }
 
-        .badge {
-            align-self: flex-start;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #60a5fa;
-            background: rgba(30, 91, 179, 0.2);
-            border: 1px solid rgba(30, 91, 179, 0.3);
-            padding: 0.35rem 0.85rem;
-            border-radius: 100px;
+        .stars-container {
+            width: 64px;
+            height: 64px;
+            border: 2px solid #333333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 1.5rem;
         }
 
+        .stars-container span {
+            color: #ADB5BD;
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+
         .plan-name {
-            font-size: 1.85rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: #FFFFFF;
             margin-bottom: 0.5rem;
         }
 
         .price-container {
             margin-bottom: 2rem;
-            display: flex;
-            align-items: baseline;
-            gap: 0.25rem;
         }
 
         .current-price {
-            font-size: 2.75rem;
-            font-weight: 700;
-            color: var(--text-primary);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #FFFFFF;
         }
 
         .billing-cycle {
             font-size: 1rem;
-            color: var(--text-secondary);
+            color: #ADB5BD;
         }
 
         ul {
@@ -152,26 +124,56 @@
         }
 
         li {
-            margin-bottom: 1.1rem;
+            margin-bottom: 1rem;
             font-size: 1rem;
             display: flex;
             align-items: center;
-            color: var(--text-primary);
+            color: #ADB5BD;
         }
 
-        li::before {
+        li.included::before {
             content: "✓";
-            color: var(--accent-blue-hover);
+            color: #28A745;
             margin-right: 0.85rem;
             font-weight: bold;
             font-size: 1.1rem;
         }
 
+        li.excluded::before {
+            content: "✗";
+            color: #DC3545;
+            margin-right: 0.85rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .select-btn {
+            background-color: #2E2E2E;
+            border: 1px solid #444444;
+            color: #FFFFFF;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 0.8rem;
+            border-radius: 16px;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1.5rem;
+        }
+
+        .select-btn:hover {
+            background-color: #3E3E3E;
+            border-color: #0056b3;
+        }
+
         .footer-note {
             text-align: center;
-            padding-top: 3.5rem;
-            border-top: 1px solid var(--border-color);
-            max-width: 640px;
+            padding-top: 3rem;
+            border-top: 1px solid #333333;
+            max-width: 600px;
             margin: 0 auto;
             font-size: 0.9rem;
         }
@@ -181,24 +183,24 @@
         }
 
         .footer-note strong {
-            color: var(--text-primary);
+            color: #FFFFFF;
         }
 
         a {
-            color: var(--accent-blue-hover);
+            color: #0056b3;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             transition: color 0.2s ease;
         }
 
         a:hover {
-            color: #60a5fa;
+            color: #1E5BB3;
             text-decoration: underline;
         }
 
         @media (max-width: 480px) {
-            h1 { font-size: 2.75rem; }
-            .card { padding: 1.75rem; }
+            h1 { font-size: 2.5rem; }
+            .card { padding: 1.5rem; }
         }
     </style>
 </head>
@@ -211,45 +213,48 @@
         <h1>Pricing Plans</h1>
 
         <div class="pricing-grid">
-            <!-- Plus Plan Card -->
+            <!-- Plus Plan -->
             <div class="card">
-                <span class="badge">Recommended</span>
+                <div class="stars-container">
+                    <span>★★</span>
+                </div>
                 <h2 class="plan-name">Plus</h2>
                 <div class="price-container">
                     <span class="current-price">4.99 €</span>
                     <span class="billing-cycle">/ month</span>
                 </div>
                 <ul>
-                    <li>10 Active Tracking Slots</li>
-                    <li>5 Hidden Tracking Slots</li>
-                    <li>Ad-Free App Experience</li>
-                    <li>Smart Search Capabilities Enabled</li>
-                    <li>Instant Restock Alerts</li>
+                    <li class="included">10 Normal Slots</li>
+                    <li class="included">5 Hidden Slots</li>
+                    <li class="included">No Ads</li>
+                    <li class="included">Smart Search</li>
                 </ul>
+                <button class="select-btn">Select Plan</button>
             </div>
 
-            <!-- Pro Plan Card -->
+            <!-- Pro Plan -->
             <div class="card">
-                <div style="height: 31px; margin-bottom: 1.5rem;"></div>
+                <div class="stars-container">
+                    <span>★</span>
+                </div>
                 <h2 class="plan-name">Pro</h2>
                 <div class="price-container">
                     <span class="current-price">7.99 €</span>
                     <span class="billing-cycle">/ month</span>
                 </div>
                 <ul>
-                    <li>Unlimited Active Tracking Slots</li>
-                    <li>Unlimited Hidden Tracking Slots</li>
-                    <li>Ad-Free App Experience</li>
-                    <li>Smart Search Capabilities Enabled</li>
-                    <li>Priority Alerts & Fastest Checks</li>
-                    <li>Dedicated Client Support</li>
+                    <li class="included">Unlimited Normal Slots</li>
+                    <li class="included">Unlimited Hidden Slots</li>
+                    <li class="included">No Ads</li>
+                    <li class="included">Smart Search</li>
                 </ul>
+                <button class="select-btn">Select Plan</button>
             </div>
         </div>
 
         <footer class="footer-note">
             <p>Purchases are completed inside the <strong>Restockr</strong> mobile application. Payments are securely processed by <strong>Paddle</strong>, our Merchant of Record.</p>
-            <p>Refund requests may be submitted within 14 days of purchase. Read our full <a href="refund-policy.html">Refund Policy</a>.</p>
+            <p>Refund requests may be submitted within 14 days if the application does not function properly. Read our <a href="refund-policy.html">Refund Policy</a>.</p>
             <p>For billing support, contact us at <a href="mailto:sytex.comp@gmail.com">sytex.comp@gmail.com</a></p>
         </footer>
     </main>
