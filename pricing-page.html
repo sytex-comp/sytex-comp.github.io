@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pricing Page - Restockr</title>
+    <title>Pricing Plans - Restockr</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,18 +15,21 @@
         }
 
         :root {
-            --bg-primary: #0a0a0b;
-            --bg-secondary: #111113;
+            --bg-primary: #050505;
+            --bg-secondary: #0b0b0d;
+            --bg-card: #121215;
             --text-primary: #f5f5f7;
-            --text-secondary: #8e8e93;
-            --accent-blue: #3b82f6;
-            --accent-blue-hover: #60a5fa;
-            --border-color: #1c1c1e;
+            --text-secondary: #9ea0a5;
+            --accent-blue: #0056b3;
+            --accent-blue-hover: #1e88e5;
+            --border-color: #1e1e24;
+            --glow-color: rgba(30, 91, 179, 0.15);
         }
 
         body {
             font-family: 'Space Grotesk', sans-serif;
             background-color: var(--bg-primary);
+            background-image: radial-gradient(circle at 50% 0%, var(--glow-color) 0%, transparent 60%);
             color: var(--text-secondary);
             line-height: 1.6;
             display: flex;
@@ -38,15 +41,41 @@
         .container {
             max-width: 900px;
             width: 100%;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-nav {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .back-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s ease;
+        }
+
+        .back-nav a:hover {
+            color: var(--accent-blue-hover);
         }
 
         h1 {
             font-size: 3.5rem;
             font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 3rem;
+            letter-spacing: -0.03em;
+            margin-bottom: 3.5rem;
             text-align: center;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            background: linear-gradient(135deg, #ffffff 30%, #9ea0a5 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -54,23 +83,27 @@
 
         .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.25rem;
+            margin-bottom: 4.5rem;
         }
 
         .card {
-            background-color: var(--bg-secondary);
+            background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 24px;
-            padding: 2.5rem;
+            padding: 2.75rem;
             display: flex;
             flex-direction: column;
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
         .card:hover {
-            border-color: var(--accent-blue);
+            border-color: var(--accent-blue-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(30, 91, 179, 0.08);
         }
 
         .badge {
@@ -79,15 +112,16 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--accent-blue);
-            background: rgba(59, 130, 246, 0.1);
-            padding: 0.25rem 0.75rem;
+            color: #60a5fa;
+            background: rgba(30, 91, 179, 0.2);
+            border: 1px solid rgba(30, 91, 179, 0.3);
+            padding: 0.35rem 0.85rem;
             border-radius: 100px;
             margin-bottom: 1.5rem;
         }
 
         .plan-name {
-            font-size: 1.75rem;
+            font-size: 1.85rem;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.5rem;
@@ -95,10 +129,13 @@
 
         .price-container {
             margin-bottom: 2rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
         }
 
         .current-price {
-            font-size: 2.5rem;
+            font-size: 2.75rem;
             font-weight: 700;
             color: var(--text-primary);
         }
@@ -108,14 +145,6 @@
             color: var(--text-secondary);
         }
 
-        .old-price {
-            display: block;
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            text-decoration: line-through;
-            margin-top: -0.25rem;
-        }
-
         ul {
             list-style: none;
             margin-top: 1rem;
@@ -123,30 +152,32 @@
         }
 
         li {
-            margin-bottom: 1rem;
+            margin-bottom: 1.1rem;
             font-size: 1rem;
             display: flex;
             align-items: center;
+            color: var(--text-primary);
         }
 
         li::before {
-            content: "→";
-            color: var(--accent-blue);
-            margin-right: 0.75rem;
+            content: "✓";
+            color: var(--accent-blue-hover);
+            margin-right: 0.85rem;
             font-weight: bold;
+            font-size: 1.1rem;
         }
 
         .footer-note {
             text-align: center;
-            padding-top: 3rem;
+            padding-top: 3.5rem;
             border-top: 1px solid var(--border-color);
-            max-width: 600px;
+            max-width: 640px;
             margin: 0 auto;
+            font-size: 0.9rem;
         }
 
         .footer-note p {
             margin-bottom: 1rem;
-            font-size: 0.9375rem;
         }
 
         .footer-note strong {
@@ -154,66 +185,72 @@
         }
 
         a {
-            color: var(--accent-blue);
+            color: var(--accent-blue-hover);
             text-decoration: none;
             font-weight: 500;
             transition: color 0.2s ease;
         }
 
         a:hover {
-            color: var(--accent-blue-hover);
+            color: #60a5fa;
             text-decoration: underline;
         }
 
         @media (max-width: 480px) {
-            h1 { font-size: 2.5rem; }
-            .card { padding: 1.5rem; }
+            h1 { font-size: 2.75rem; }
+            .card { padding: 1.75rem; }
         }
     </style>
 </head>
 <body>
     <main class="container">
-        <h1>Pricing Page</h1>
+        <div class="back-nav">
+            <a href="index.html">← Back to Home</a>
+        </div>
+
+        <h1>Pricing Plans</h1>
 
         <div class="pricing-grid">
+            <!-- Plus Plan Card -->
             <div class="card">
-                <span class="badge">Most Popular</span>
+                <span class="badge">Recommended</span>
                 <h2 class="plan-name">Plus</h2>
                 <div class="price-container">
-                    <span class="current-price">7.99 €</span>
+                    <span class="current-price">4.99 €</span>
                     <span class="billing-cycle">/ month</span>
-                    <span class="old-price">14.99 €</span>
                 </div>
                 <ul>
-                    <li>100 credits / month</li>
-                    <li>60+ languages unlocked</li>
-                    <li>33× more translation power</li>
-                    <li>Built for daily use</li>
-                    <li>Best value for regular users</li>
+                    <li>10 Active Tracking Slots</li>
+                    <li>5 Hidden Tracking Slots</li>
+                    <li>Ad-Free App Experience</li>
+                    <li>Smart Search Capabilities Enabled</li>
+                    <li>Instant Restock Alerts</li>
                 </ul>
             </div>
 
+            <!-- Pro Plan Card -->
             <div class="card">
-                <div style="height: 29px; margin-bottom: 1.5rem;"></div> <h2 class="plan-name">Pro</h2>
+                <div style="height: 31px; margin-bottom: 1.5rem;"></div>
+                <h2 class="plan-name">Pro</h2>
                 <div class="price-container">
-                    <span class="current-price">29.99 €</span>
+                    <span class="current-price">7.99 €</span>
                     <span class="billing-cycle">/ month</span>
                 </div>
                 <ul>
-                    <li>Unlimited credits</li>
-                    <li>Full 100+ language library</li>
-                    <li>Instant language search</li>
-                    <li>No credit limits</li>
-                    <li>Fastest performance</li>
-                    <li>Designed for professionals</li>
+                    <li>Unlimited Active Tracking Slots</li>
+                    <li>Unlimited Hidden Tracking Slots</li>
+                    <li>Ad-Free App Experience</li>
+                    <li>Smart Search Capabilities Enabled</li>
+                    <li>Priority Alerts & Fastest Checks</li>
+                    <li>Dedicated Client Support</li>
                 </ul>
             </div>
         </div>
 
         <footer class="footer-note">
-            <p>Purchases are completed inside the <strong>Opteme</strong> mobile application. Payments are securely processed by <strong>Paddle</strong>, our Merchant of Record.</p>
-            <p>Refund requests may be submitted within 24 hours if the application does not function properly. Read our <a href="https://sytex-comp.github.io/refund-policy.html">Refund Policy</a>.</p>
-            <p>For billing support, contact <a href="mailto:sytex.comp@gmail.com">sytex.comp@gmail.com</a></p>
+            <p>Purchases are completed inside the <strong>Restockr</strong> mobile application. Payments are securely processed by <strong>Paddle</strong>, our Merchant of Record.</p>
+            <p>Refund requests may be submitted within 14 days of purchase. Read our full <a href="refund-policy.html">Refund Policy</a>.</p>
+            <p>For billing support, contact us at <a href="mailto:sytex.comp@gmail.com">sytex.comp@gmail.com</a></p>
         </footer>
     </main>
 </body>
