@@ -15,20 +15,23 @@
         }
 
         :root {
-            --bg-primary: #0a0a0b;
-            --bg-secondary: #111113;
+            --bg-primary: #050505;
+            --bg-secondary: #0b0b0d;
+            --bg-card: #121215;
             --text-primary: #f5f5f7;
-            --text-secondary: #8e8e93;
-            --accent-blue: #3b82f6;
-            --accent-blue-hover: #60a5fa;
-            --border-color: #1c1c1e;
+            --text-secondary: #9ea0a5;
+            --accent-blue: #0056b3;
+            --accent-blue-hover: #1e88e5;
+            --border-color: #1e1e24;
+            --glow-color: rgba(30, 91, 179, 0.12);
         }
 
         body {
             font-family: 'Space Grotesk', sans-serif;
             background-color: var(--bg-primary);
+            background-image: radial-gradient(circle at 50% 0%, var(--glow-color) 0%, transparent 60%);
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.65;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -38,15 +41,40 @@
         .container {
             max-width: 800px;
             width: 100%;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-nav {
+            margin-bottom: 2rem;
+        }
+
+        .back-nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s ease;
+        }
+
+        .back-nav a:hover {
+            color: var(--accent-blue-hover);
         }
 
         h1 {
-            font-size: 3.5rem;
+            font-size: 3.25rem;
             font-weight: 700;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
             margin-bottom: 2.5rem;
-            text-align: center;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            text-align: left;
+            background: linear-gradient(135deg, #ffffff 30%, #9ea0a5 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -72,7 +100,7 @@
         }
 
         ul {
-            margin-bottom: 1.5rem;
+            margin: 1.5rem 0;
             padding-left: 1.25rem;
             list-style-type: none;
         }
@@ -80,32 +108,33 @@
         li {
             margin-bottom: 0.75rem;
             position: relative;
+            font-size: 1.05rem;
         }
 
         li::before {
             content: "→";
             position: absolute;
             left: -1.5rem;
-            color: var(--accent-blue);
+            color: var(--accent-blue-hover);
         }
 
         a {
-            color: var(--accent-blue);
+            color: var(--accent-blue-hover);
             text-decoration: none;
             transition: color 0.2s ease;
         }
 
         a:hover {
-            color: var(--accent-blue-hover);
+            color: #60a5fa;
             text-decoration: underline;
         }
 
         .footer-note {
-            margin-top: 4rem;
-            padding-top: 2rem;
+            margin-top: 4.5rem;
+            padding-top: 2.5rem;
             border-top: 1px solid var(--border-color);
             text-align: center;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
         }
 
         @media (max-width: 480px) {
@@ -118,11 +147,18 @@
             h2 {
                 font-size: 1.25rem;
             }
+            p, li {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <main class="container">
+        <div class="back-nav">
+            <a href="index.html">← Back to Home</a>
+        </div>
+
         <h1>Refund Policy</h1>
         
         <p>Payments for subscriptions or purchases made through the Application are processed by our Merchant of Record, <strong>Paddle</strong>. By completing a purchase, you agree to Paddle’s terms and conditions.</p>
@@ -143,7 +179,7 @@
         <p>Approved refunds are credited back to the original payment method used via Paddle. Please note that bank processing times may vary and are outside of our direct control.</p>
 
         <div class="footer-note">
-            <p>For any additional questions regarding our billing practices, please reach out to <a href="mailto:sytex.comp@gmail.com">sytex.comp@gmail.com</a></p>
+            <p>For any additional questions regarding our billing practices, please reach out to us at <a href="mailto:sytex.comp@gmail.com">sytex.comp@gmail.com</a></p>
         </div>
     </main>
 </body>
