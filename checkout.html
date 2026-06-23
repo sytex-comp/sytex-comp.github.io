@@ -73,22 +73,15 @@
             document.getElementById("status").textContent = message;
         }
 
-        function getTransactionId() {
+        function getPriceId() {
             const params = new URLSearchParams(window.location.search);
-            const keys = ["_ptxn", "ptxn", "transaction_id", "transaction"];
-            for (const key of keys) {
-                const value = params.get(key);
-                if (value && value.startsWith("txn_")) {
-                    return value;
-                }
-            }
-            return null;
+            return params.get('price');
         }
 
         async function openCheckout() {
-            const transactionId = getTransactionId();
-            if (!transactionId) {
-                setStatus("No transaction found in URL.\nExpected ?_ptxn=txn_...");
+            const priceId = getPriceId();
+            if (!priceId || !priceId.startsWith("pri_")) {
+                setStatus("No price ID found in URL.\nExpected ?price=pri_...");
                 return;
             }
 
@@ -110,11 +103,19 @@
                 });
 
                 setStatus("Opening checkout...");
-                Paddle.Checkout.open({ transactionId });
+                
+                // Open checkout with the specific price ID and quantity of 1
+                Paddle.Checkout.open({
+                    items: [
+                        {
+                            priceId: priceId,
+                            quantity: 1
+                        }
+                    ]
+                });
             } catch (err) {
                 console.error(err);
-                // Fallback to direct transaction URL if JS init/open fails.
-                window.location.href = "https://checkout.paddle.com/transaction/" + encodeURIComponent(transactionId);
+                setStatus("Failed to open checkout. Please try again.");
             }
         }
 
