@@ -66,20 +66,18 @@
         <p id="status" class="tagline">Preparing secure checkout...</p>
     </main>
 
-    <script>
+        <script>
         const PADDLE_CLIENT_TOKEN = "live_9462949210d5841fcfefa2fad32";
 
         function setStatus(message) {
             document.getElementById("status").textContent = message;
         }
 
-        function getPriceId() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get('price');
-        }
-
         async function openCheckout() {
-            const priceId = getPriceId();
+            const params = new URLSearchParams(window.location.search);
+            const priceId = params.get('price');
+            const userId = params.get('userId'); // <-- Grab the user's ID!
+
             if (!priceId || !priceId.startsWith("pri_")) {
                 setStatus("No price ID found in URL.\nExpected ?price=pri_...");
                 return;
@@ -104,14 +102,9 @@
 
                 setStatus("Opening checkout...");
                 
-                // Open checkout with the specific price ID and quantity of 1
                 Paddle.Checkout.open({
-                    items: [
-                        {
-                            priceId: priceId,
-                            quantity: 1
-                        }
-                    ]
+                    items: [{ priceId: priceId, quantity: 1 }],
+                    customData: { userId: userId } // <-- Secretly pass it to Paddle!
                 });
             } catch (err) {
                 console.error(err);
