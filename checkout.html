@@ -66,7 +66,7 @@
         <p id="status" class="tagline">Preparing secure checkout...</p>
     </main>
 
-        <script>
+    <script>
         const PADDLE_CLIENT_TOKEN = "live_9462949210d5841fcfefa2fad32";
 
         function setStatus(message) {
@@ -76,7 +76,8 @@
         async function openCheckout() {
             const params = new URLSearchParams(window.location.search);
             const priceId = params.get('price');
-            const userId = params.get('userId'); // <-- Grab the user's ID!
+            const userId = params.get('userId'); // <-- Grab the user's ID
+            const userEmail = params.get('email'); // <-- Grab the user's Email
 
             if (!priceId || !priceId.startsWith("pri_")) {
                 setStatus("No price ID found in URL.\nExpected ?price=pri_...");
@@ -102,10 +103,20 @@
 
                 setStatus("Opening checkout...");
                 
-                Paddle.Checkout.open({
+                // Construct the checkout payload
+                const checkoutData = {
                     items: [{ priceId: priceId, quantity: 1 }],
                     customData: { userId: userId } // <-- Secretly pass it to Paddle!
-                });
+                };
+
+                // Only add the customer email if it was successfully passed in the URL
+                if (userEmail && userEmail.trim() !== "") {
+                    checkoutData.customer = {
+                        email: userEmail
+                    };
+                }
+                
+                Paddle.Checkout.open(checkoutData);
             } catch (err) {
                 console.error(err);
                 setStatus("Failed to open checkout. Please try again.");
