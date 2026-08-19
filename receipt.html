@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Receipt</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #13151E;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 50px;
+        }
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 800px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="receipt-container">
+        <!-- Widget will be injected here dynamically -->
+    </div>
+
+    <script>
+        // Get query parameters
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get('orderId');
+        
+        // Use the API URL from query string, or their Cloud Run backend, or local fallback
+        const defaultApi = "https://restockr-543543806944.europe-west1.run.app";
+        const apiUrl = params.get('apiUrl') || defaultApi;
+
+        if (!orderId) {
+            document.body.innerHTML = "<h2 style='color: white; text-align: center; margin-top: 50px;'>Error: No orderId provided in URL.</h2>";
+        } else {
+            // Dynamically load the widget.js script from the specified API URL
+            const script = document.createElement('script');
+            script.src = `${apiUrl}/widget.js`;
+            script.defer = true;
+            
+            script.onload = () => {
+                const container = document.getElementById('receipt-container');
+                const widget = document.createElement('not-boring-receipt');
+                widget.setAttribute('order-id', orderId);
+                widget.setAttribute('api-url', apiUrl);
+                container.appendChild(widget);
+            };
+            
+            script.onerror = () => {
+                document.body.innerHTML = `<h2 style='color: white; text-align: center; margin-top: 50px;'>Error: Failed to load widget from API ${apiUrl}</h2>`;
+            };
+            
+            document.head.appendChild(script);
+        }
+    </script>
+</body>
+</html>
