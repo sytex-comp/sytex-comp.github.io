@@ -67,63 +67,66 @@
     </main>
 
     <script>
-        const PADDLE_CLIENT_TOKEN = "live_9462949210d5841fcfefa2fad32";
+    const PADDLE_CLIENT_TOKEN = "live_9462949210d5841fcfefa2fad32";
 
-        function setStatus(message) {
-            document.getElementById("status").textContent = message;
+    function setStatus(message) {
+        document.getElementById("status").textContent = message;
+    }
+
+    async function openCheckout() {
+        const params = new URLSearchParams(window.location.search);
+        const priceId = params.get('price');
+        const userId = params.get('userId'); 
+        const userEmail = params.get('email'); 
+
+        // Let's pass along the API url so you can test locally as well as on production
+        const apiUrl = params.get('apiUrl') || "https://restockr-543543806944.europe-west1.run.app";
+
+        if (!priceId || !priceId.startsWith("pri_")) {
+            setStatus("No price ID found in URL.\nExpected ?price=pri_...");
+            return;
         }
 
-        async function openCheckout() {
-            const params = new URLSearchParams(window.location.search);
-            const priceId = params.get('price');
-            const userId = params.get('userId'); // <-- Grab the user's ID
-            const userEmail = params.get('email'); // <-- Grab the user's Email
+        if (!PADDLE_CLIENT_TOKEN || PADDLE_CLIENT_TOKEN.includes("YOUR_CLIENT_SIDE_TOKEN")) {
+            setStatus("Missing Paddle client token.\nSet PADDLE_CLIENT_TOKEN in checkout.html.");
+            return;
+        }
 
-            if (!priceId || !priceId.startsWith("pri_")) {
-                setStatus("No price ID found in URL.\nExpected ?price=pri_...");
-                return;
-            }
+        try {
+            Paddle.Initialize({
+                token: PADDLE_CLIENT_TOKEN
+            });
 
-            if (!PADDLE_CLIENT_TOKEN || PADDLE_CLIENT_TOKEN.includes("YOUR_CLIENT_SIDE_TOKEN")) {
-                setStatus("Missing Paddle client token.\nSet PADDLE_CLIENT_TOKEN in checkout.html.");
-                return;
-            }
-
-            try {
-                Paddle.Initialize({
-                    token: PADDLE_CLIENT_TOKEN,
-                    checkout: {
-                        settings: {
-                            displayMode: "overlay",
-                            theme: "light",
-                            locale: "en"
-                        }
-                    }
-                });
-
-                setStatus("Opening checkout...");
-                
-                // Construct the checkout payload
-                const checkoutData = {
-                    items: [{ priceId: priceId, quantity: 1 }],
-                    customData: { userId: userId } // <-- Secretly pass it to Paddle!
-                };
-
-                // Only add the customer email if it was successfully passed in the URL
-                if (userEmail && userEmail.trim() !== "") {
-                    checkoutData.customer = {
-                        email: userEmail
-                    };
+            setStatus("Opening checkout...");
+            
+            // Construct the checkout payload with native successUrl redirect
+            const checkoutData = {
+                items: [{ priceId: priceId, quantity: 1 }],
+                customData: { userId: userId },
+                settings: {
+                    displayMode: "overlay",
+                    theme: "light",
+                    locale: "en",
+                    // PADDLE NATIVE REDIRECT:
+                    successUrl: `https://sytex-comp.github.io/receipt.html?apiUrl=${encodeURIComponent(apiUrl)}`
                 }
-                
-                Paddle.Checkout.open(checkoutData);
-            } catch (err) {
-                console.error(err);
-                setStatus("Failed to open checkout. Please try again.");
-            }
-        }
+            };
 
-        openCheckout();
-    </script>
+            // Only add the customer email if it was successfully passed in the URL
+            if (userEmail && userEmail.trim() !== "") {
+                checkoutData.customer = {
+                    email: userEmail
+                };
+            }
+            
+            Paddle.Checkout.open(checkoutData);
+        } catch (err) {
+            console.error(err);
+            setStatus("Failed to open checkout. Please try again.");
+        }
+    }
+
+    openCheckout();
+</script>
 </body>
 </html>
