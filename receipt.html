@@ -31,7 +31,8 @@
     <script>
         // Get query parameters
         const params = new URLSearchParams(window.location.search);
-        const orderId = params.get('orderId');
+        // Paddle v2 automatically appends the transaction ID as _ptxn
+        const orderId = params.get('orderId') || params.get('_ptxn');
         
         // Use the API URL from query string, or their Cloud Run backend, or local fallback
         const defaultApi = "https://restockr-543543806944.europe-west1.run.app";
