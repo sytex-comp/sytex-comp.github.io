@@ -79,7 +79,7 @@
         const userId = params.get('userId'); 
         const userEmail = params.get('email'); 
 
-        // Let's pass along the API url so you can test locally as well as on production
+        // Get the API URL so the receipt knows where to fetch data
         const apiUrl = params.get('apiUrl') || "https://restockr-543543806944.europe-west1.run.app";
 
         if (!priceId || !priceId.startsWith("pri_")) {
@@ -93,26 +93,33 @@
         }
 
         try {
+            // 1. Initialize Paddle with the redirect event callback
             Paddle.Initialize({
-                token: PADDLE_CLIENT_TOKEN
+                token: PADDLE_CLIENT_TOKEN,
+                eventCallback: function(event) {
+                    console.log("Paddle Event:", event.name);
+                    if (event.name === "checkout.completed") {
+                        const transactionId = event.data.transaction_id || event.data.id;
+                        
+                        // Redirect instantly to receipt.html with the transaction ID
+                        window.location.href = `https://sytex-comp.github.io/receipt.html?orderId=${transactionId}&apiUrl=${encodeURIComponent(apiUrl)}`;
+                    }
+                }
             });
 
             setStatus("Opening checkout...");
             
-            // Construct the checkout payload with native successUrl redirect
+            // 2. Pass display settings inside checkoutData
             const checkoutData = {
                 items: [{ priceId: priceId, quantity: 1 }],
                 customData: { userId: userId },
                 settings: {
                     displayMode: "overlay",
                     theme: "light",
-                    locale: "en",
-                    // PADDLE NATIVE REDIRECT:
-                    successUrl: `https://sytex-comp.github.io/receipt.html?apiUrl=${encodeURIComponent(apiUrl)}`
+                    locale: "en"
                 }
             };
 
-            // Only add the customer email if it was successfully passed in the URL
             if (userEmail && userEmail.trim() !== "") {
                 checkoutData.customer = {
                     email: userEmail
