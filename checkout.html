@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Checkout</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 
     <style>
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         :root {
@@ -25,22 +25,22 @@
         }
 
         body {
-            font-family: 'Space Grotesk', sans-serif;
+            align-items: center;
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            font-family: "Space Grotesk", sans-serif;
             justify-content: center;
-            padding: 2rem;
             line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem;
         }
 
         .container {
             max-width: 600px;
-            width: 100%;
             text-align: center;
+            width: 100%;
         }
 
         .app-name {
@@ -51,15 +51,16 @@
         }
 
         .tagline {
-            font-size: 1.05rem;
             color: var(--text-secondary);
+            font-size: 1.05rem;
             font-weight: 400;
-            max-width: 520px;
             margin: 0 auto;
+            max-width: 520px;
             white-space: pre-line;
         }
     </style>
 </head>
+
 <body>
     <main class="container">
         <h1 class="app-name">Checkout</h1>
@@ -67,73 +68,178 @@
     </main>
 
     <script>
-    const PADDLE_CLIENT_TOKEN = "live_9462949210d5841fcfefa2fad32";
+        var PADDLE_CLIENT_TOKEN = "live_9462949210d5841fcfefa2fad32";
+        var DEFAULT_PRODUCT_ID = "pro_01m0ds3634p3d2hk5hr3z3xkbf";
+        var DEFAULT_PRICE_ID = "pri_01m0ds6jbj2a3a1mp83zfkphk0";
+        var DEFAULT_API_URL = "https://restockr-543543806944.europe-west1.run.app";
+        var DEFAULT_RECEIPT_URL = "https://sytex-comp.github.io/receipt.html";
 
-    function setStatus(message) {
-        document.getElementById("status").textContent = message;
-    }
-
-    async function openCheckout() {
-        const params = new URLSearchParams(window.location.search);
-        const priceId = params.get('price');
-        const userId = params.get('userId'); 
-        const userEmail = params.get('email'); 
-
-        // Get the API URL so the receipt knows where to fetch data
-        const apiUrl = params.get('apiUrl') || "https://restockr-543543806944.europe-west1.run.app";
-
-        if (!priceId || !priceId.startsWith("pri_")) {
-            setStatus("No price ID found in URL.\nExpected ?price=pri_...");
-            return;
+        function setStatus(message) {
+            document.getElementById("status").textContent = message;
         }
 
-        if (!PADDLE_CLIENT_TOKEN || PADDLE_CLIENT_TOKEN.includes("YOUR_CLIENT_SIDE_TOKEN")) {
-            setStatus("Missing Paddle client token.\nSet PADDLE_CLIENT_TOKEN in checkout.html.");
-            return;
+        function query() {
+            return new URLSearchParams(window.location.search);
         }
 
-        try {
-            // 1. Initialize Paddle with the redirect event callback
-            Paddle.Initialize({
-                token: PADDLE_CLIENT_TOKEN,
-                eventCallback: function(event) {
-                    console.log("Paddle Event:", event.name);
-                    if (event.name === "checkout.completed") {
-                        const transactionId = event.data.transaction_id || event.data.id;
-                        
-                        // Redirect instantly to receipt.html with the transaction ID
-                        window.location.href = `https://sytex-comp.github.io/receipt.html?orderId=${transactionId}&apiUrl=${encodeURIComponent(apiUrl)}`;
+        function firstValue() {
+            var index;
+
+            for (index = 0; index < arguments.length; index += 1) {
+                if (arguments[index] && String(arguments[index]).trim() !== "") {
+                    return String(arguments[index]).trim();
+                }
+            }
+
+            return "";
+        }
+
+        function transactionIdFromEvent(event) {
+            var data = event && event.data ? event.data : {};
+            var transaction = data.transaction || data.transaction_details || {};
+
+            return firstValue(
+                data.transaction_id,
+                data.transactionId,
+                data.id,
+                transaction.id,
+                transaction.transaction_id
+            );
+        }
+
+        function receiptSnapshotFromCheckout(data, transactionId) {
+            var payment = data && data.payment ? data.payment : {};
+            var methodDetails = payment.method_details || {};
+
+            return {
+                orderId: transactionId,
+                transactionId: transactionId,
+                currency_code: data.currency_code,
+                purchaseDate: new Date().toISOString(),
+                items: (data.items || []).map(function (item) {
+                    return {
+                        product: item.product || {},
+                        price: item.price || {},
+                        quantity: item.quantity,
+                        totals: item.totals || {}
+                    };
+                }),
+                totals: data.totals || {},
+                payment: {
+                    method_details: {
+                        type: methodDetails.type,
+                        card: methodDetails.card ? {
+                            type: methodDetails.card.type,
+                            last4: methodDetails.card.last4
+                        } : null
                     }
                 }
-            });
-
-            setStatus("Opening checkout...");
-            
-            // 2. Pass display settings inside checkoutData
-            const checkoutData = {
-                items: [{ priceId: priceId, quantity: 1 }],
-                customData: { userId: userId },
-                settings: {
-                    displayMode: "overlay",
-                    theme: "light",
-                    locale: "en"
-                }
             };
-
-            if (userEmail && userEmail.trim() !== "") {
-                checkoutData.customer = {
-                    email: userEmail
-                };
-            }
-            
-            Paddle.Checkout.open(checkoutData);
-        } catch (err) {
-            console.error(err);
-            setStatus("Failed to open checkout. Please try again.");
         }
-    }
 
-    openCheckout();
-</script>
+        function storeReceiptSnapshot(transactionId, data) {
+            var snapshot;
+
+            try {
+                snapshot = receiptSnapshotFromCheckout(data || {}, transactionId);
+                sessionStorage.setItem("notBoringReceipt:" + transactionId, JSON.stringify(snapshot));
+            } catch (error) {
+                console.warn("Could not store receipt snapshot.", error);
+            }
+        }
+
+        function redirectToReceipt(transactionId, params) {
+            var receiptUrl = params.get("receiptUrl") || DEFAULT_RECEIPT_URL;
+            var apiUrl = params.get("apiUrl") || DEFAULT_API_URL;
+            var target = new URL(receiptUrl, window.location.href);
+
+            target.searchParams.set("orderId", transactionId);
+            target.searchParams.set("transactionId", transactionId);
+            target.searchParams.set("productId", params.get("product") || DEFAULT_PRODUCT_ID);
+            target.searchParams.set("priceId", params.get("price") || DEFAULT_PRICE_ID);
+            target.searchParams.set("apiUrl", apiUrl);
+
+            if (params.get("receiptEndpoint")) {
+                target.searchParams.set("receiptEndpoint", params.get("receiptEndpoint"));
+            }
+
+            window.location.href = target.toString();
+        }
+
+        async function openCheckout() {
+            var params = query();
+            var priceId = params.get("price") || DEFAULT_PRICE_ID;
+            var userId = params.get("userId");
+            var userEmail = params.get("email");
+            var checkoutData;
+
+            if (!priceId || !priceId.startsWith("pri_")) {
+                setStatus("No price ID found.\nExpected ?price=pri_...");
+                return;
+            }
+
+            if (!PADDLE_CLIENT_TOKEN || PADDLE_CLIENT_TOKEN.indexOf("YOUR_CLIENT_SIDE_TOKEN") !== -1) {
+                setStatus("Missing Paddle client token.");
+                return;
+            }
+
+            try {
+                Paddle.Initialize({
+                    token: PADDLE_CLIENT_TOKEN,
+                    eventCallback: function (event) {
+                        var transactionId;
+
+                        if (!event || event.name !== "checkout.completed") {
+                            return;
+                        }
+
+                        transactionId = transactionIdFromEvent(event);
+
+                        if (!transactionId) {
+                            setStatus("Checkout completed, but no transaction ID was returned.");
+                            return;
+                        }
+
+                        storeReceiptSnapshot(transactionId, event.data);
+                        redirectToReceipt(transactionId, params);
+                    }
+                });
+
+                setStatus("Opening checkout...");
+
+                checkoutData = {
+                    items: [
+                        {
+                            priceId: priceId,
+                            quantity: 1
+                        }
+                    ],
+                    customData: {
+                        productId: params.get("product") || DEFAULT_PRODUCT_ID,
+                        userId: userId || ""
+                    },
+                    settings: {
+                        displayMode: "overlay",
+                        theme: "light",
+                        locale: "en"
+                    }
+                };
+
+                if (userEmail && userEmail.trim() !== "") {
+                    checkoutData.customer = {
+                        email: userEmail
+                    };
+                }
+
+                Paddle.Checkout.open(checkoutData);
+            } catch (error) {
+                console.error(error);
+                setStatus("Failed to open checkout. Please try again.");
+            }
+        }
+
+        openCheckout();
+    </script>
 </body>
+
 </html>

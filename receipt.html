@@ -1,65 +1,377 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Receipt</title>
+    <title>Receipt</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap"
+        rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #13151E;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 50px;
+        .receipt-status {
+            color: #8892A9;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 12px;
+            left: 50%;
+            line-height: 1.5;
+            max-width: 420px;
+            position: absolute;
+            text-align: center;
+            top: 16px;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            z-index: 10;
         }
-        .container {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            height: 800px;
+
+        .receipt-status[data-state="error"] {
+            color: #d98989;
         }
     </style>
 </head>
-<body>
-    <div class="container" id="receipt-container">
-        <!-- Widget will be injected here dynamically -->
-    </div>
 
+<body class="receipt-page">
+    <div id="receipt-status" class="receipt-status">Loading receipt...</div>
+    <main id="receipt-root"></main>
+
+    <script src="receipt-api.js"></script>
     <script>
-        // Get query parameters
-        const params = new URLSearchParams(window.location.search);
-        // Paddle v2 automatically appends the transaction ID as _ptxn
-        const orderId = params.get('orderId') || params.get('_ptxn');
-        
-        // Use the API URL from query string, or their Cloud Run backend, or local fallback
-        const defaultApi = "https://restockr-543543806944.europe-west1.run.app";
-        const apiUrl = params.get('apiUrl') || defaultApi;
+        var DEFAULT_API_URL = "https://restockr-543543806944.europe-west1.run.app";
+        var EMPTY_VALUE = "--";
 
-        if (!orderId) {
-            document.body.innerHTML = "<h2 style='color: white; text-align: center; margin-top: 50px;'>Error: No orderId provided in URL.</h2>";
-        } else {
-            // Dynamically load the widget.js script from the specified API URL
-            const script = document.createElement('script');
-            script.src = `${apiUrl}/widget.js`;
-            script.defer = true;
-            
-            script.onload = () => {
-                const container = document.getElementById('receipt-container');
-                const widget = document.createElement('not-boring-receipt');
-                widget.setAttribute('order-id', orderId);
-                widget.setAttribute('api-url', apiUrl);
-                container.appendChild(widget);
-            };
-            
-            script.onerror = () => {
-                document.body.innerHTML = `<h2 style='color: white; text-align: center; margin-top: 50px;'>Error: Failed to load widget from API ${apiUrl}</h2>`;
-            };
-            
-            document.head.appendChild(script);
+        function params() {
+            return new URLSearchParams(window.location.search);
         }
+
+        function text(value) {
+            if (value === undefined || value === null) {
+                return EMPTY_VALUE;
+            }
+
+            value = String(value).replace(/\s+/g, " ").trim();
+            return value === "" ? EMPTY_VALUE : value;
+        }
+
+        function get(object, path) {
+            var parts = path.split(".");
+            var current = object;
+            var index;
+
+            for (index = 0; index < parts.length; index += 1) {
+                if (current === undefined || current === null) {
+                    return undefined;
+                }
+
+                current = current[parts[index]];
+            }
+
+            return current;
+        }
+
+        function first(object, paths) {
+            var index;
+            var value;
+
+            for (index = 0; index < paths.length; index += 1) {
+                value = get(object, paths[index]);
+
+                if (value !== undefined && value !== null && String(value).trim() !== "") {
+                    return value;
+                }
+            }
+
+            return undefined;
+        }
+
+        function unwrap(payload) {
+            return payload && (payload.receipt || payload.transaction || payload.order || payload.data || payload);
+        }
+
+        function currencyFrom(payload) {
+            return first(payload, [
+                "currencyCode",
+                "currency_code",
+                "currency",
+                "details.totals.currency_code",
+                "details.line_items.0.price.unit_price.currency_code",
+                "items.0.price.unit_price.currency_code"
+            ]) || "USD";
+        }
+
+        function money(value, currency) {
+            var numberValue;
+
+            if (value === undefined || value === null || value === "") {
+                return EMPTY_VALUE;
+            }
+
+            if (typeof value === "string" && /[^\d.,-]/.test(value)) {
+                return value;
+            }
+
+            numberValue = Number(value);
+
+            if (!isFinite(numberValue)) {
+                return text(value);
+            }
+
+            if (Math.abs(numberValue) >= 100 && Math.round(numberValue) === numberValue) {
+                numberValue = numberValue / 100;
+            }
+
+            try {
+                return new Intl.NumberFormat("en", {
+                    currency: currency || "USD",
+                    style: "currency"
+                }).format(numberValue);
+            } catch (error) {
+                return numberValue.toFixed(2);
+            }
+        }
+
+        function dateLabel(value) {
+            var date;
+
+            if (!value) {
+                return EMPTY_VALUE;
+            }
+
+            date = new Date(value);
+
+            if (isNaN(date.getTime())) {
+                return text(value);
+            }
+
+            return date.toLocaleString("en", {
+                day: "2-digit",
+                hour: "2-digit",
+                hour12: false,
+                minute: "2-digit",
+                month: "short"
+            }).toUpperCase().replace(",", " \u2022");
+        }
+
+        function cardBrand(payload) {
+            return first(payload, [
+                "cardBrand",
+                "card_brand",
+                "payment.method_details.card.type",
+                "payment.card.brand",
+                "payments.0.card.brand",
+                "payments.0.method_details.card.brand",
+                "details.payments.0.card.brand",
+                "details.payments.0.method_details.card.brand"
+            ]);
+        }
+
+        function cardLast4(payload) {
+            return first(payload, [
+                "cardLast4",
+                "card_last4",
+                "last4",
+                "last_four",
+                "payment.method_details.card.last4",
+                "payment.card.last4",
+                "payments.0.card.last4",
+                "payments.0.method_details.card.last4",
+                "details.payments.0.card.last4",
+                "details.payments.0.method_details.card.last4"
+            ]);
+        }
+
+        function receiptDataFromPayload(payload, fallbackOrderId) {
+            var source = unwrap(payload) || {};
+            var currency = currencyFrom(source);
+            var lineItem = get(source, "details.line_items.0") || get(source, "items.0") || {};
+            var totals = get(source, "details.totals") || source.totals || {};
+
+            return {
+                itemTitle: first(source, [
+                    "itemTitle",
+                    "item_title",
+                    "product.name",
+                    "items.0.product.name",
+                    "items.0.price.name",
+                    "details.line_items.0.product.name",
+                    "details.line_items.0.price.name"
+                ]) || first(lineItem, ["product.name", "price.name", "name"]),
+                itemDescription: first(source, [
+                    "itemDescription",
+                    "item_description",
+                    "description",
+                    "product.description",
+                    "items.0.product.description",
+                    "details.line_items.0.product.description"
+                ]) || first(lineItem, ["product.description", "description"]),
+                itemPrice: money(first(source, [
+                    "itemPrice",
+                    "item_price",
+                    "subtotal",
+                    "details.totals.subtotal",
+                    "totals.subtotal"
+                ]) || first(lineItem, ["totals.subtotal", "total", "price.unit_price.amount"]), currency),
+                priceTax: money(first(source, [
+                    "priceTax",
+                    "price_tax",
+                    "tax",
+                    "details.totals.tax",
+                    "totals.tax"
+                ]), currency),
+                discount: money(first(source, [
+                    "discount",
+                    "discountAmount",
+                    "discount_amount",
+                    "details.totals.discount",
+                    "totals.discount"
+                ]), currency),
+                priceTotal: money(first(source, [
+                    "priceTotal",
+                    "price_total",
+                    "total",
+                    "details.totals.total",
+                    "totals.total"
+                ]), currency),
+                orderId: first(source, [
+                    "orderId",
+                    "order_id",
+                    "transactionId",
+                    "transaction_id",
+                    "id"
+                ]) || fallbackOrderId,
+                paymentMethod: first(source, [
+                    "paymentMethod",
+                    "payment_method",
+                    "paidWith",
+                    "paid_with"
+                ]),
+                cardBrand: cardBrand(source),
+                cardLast4: cardLast4(source),
+                purchaseDate: dateLabel(first(source, [
+                "purchaseDate",
+                "purchase_date",
+                "completed_at",
+                "billed_at",
+                "created_at",
+                "createdAt",
+                    "updated_at"
+                ]))
+            };
+        }
+
+        function endpointCandidates(apiUrl, orderId, explicitEndpoint) {
+            var base = apiUrl.replace(/\/+$/, "");
+            var encoded = encodeURIComponent(orderId);
+            var explicit = explicitEndpoint ? new URL(explicitEndpoint, base + "/").toString() : "";
+            var urls = [
+                explicit,
+                base + "/receipt?orderId=" + encoded,
+                base + "/api/receipt?orderId=" + encoded,
+                base + "/paddle/receipt?orderId=" + encoded,
+                base + "/transaction/" + encoded,
+                base + "/transactions/" + encoded,
+                base + "/api/transaction/" + encoded,
+                base + "/api/transactions/" + encoded
+            ];
+
+            return urls.filter(function (url, index) {
+                return url && urls.indexOf(url) === index;
+            });
+        }
+
+        async function fetchJson(urls) {
+            var index;
+            var response;
+            var errors = [];
+
+            for (index = 0; index < urls.length; index += 1) {
+                try {
+                    response = await fetch(urls[index], {
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    });
+
+                    if (response.ok) {
+                        return await response.json();
+                    }
+
+                    errors.push(urls[index] + " returned " + response.status);
+                } catch (error) {
+                    errors.push(urls[index] + " failed");
+                }
+            }
+
+            throw new Error(errors.join("; "));
+        }
+
+        function storedReceipt(orderId) {
+            var raw;
+
+            try {
+                raw = sessionStorage.getItem("notBoringReceipt:" + orderId);
+                return raw ? JSON.parse(raw) : null;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function setStatus(message, state) {
+            var element = document.getElementById("receipt-status");
+
+            element.textContent = message;
+            element.dataset.state = state || "";
+        }
+
+        async function loadReceipt() {
+            var search = params();
+            var orderId = search.get("orderId") || search.get("transactionId");
+            var apiUrl = search.get("apiUrl") || DEFAULT_API_URL;
+            var handle;
+            var payload;
+            var receiptData;
+            var snapshot;
+
+            handle = NotBoringReceipt.mount({
+                target: "#receipt-root",
+                data: {
+                    orderId: orderId || EMPTY_VALUE
+                }
+            });
+
+            if (!orderId) {
+                setStatus("Missing order ID in receipt URL.", "error");
+                return;
+            }
+
+            snapshot = storedReceipt(orderId);
+
+            if (snapshot) {
+                receiptData = receiptDataFromPayload(snapshot, orderId);
+                handle.update(receiptData);
+                setStatus("");
+                return;
+            }
+
+            try {
+                payload = await fetchJson(endpointCandidates(apiUrl, orderId, search.get("receiptEndpoint")));
+                receiptData = receiptDataFromPayload(payload, orderId);
+                handle.update(receiptData);
+                setStatus("");
+            } catch (error) {
+                console.error(error);
+                setStatus("Receipt data is not available yet. Showing the order ID from checkout.", "error");
+            }
+        }
+
+        loadReceipt();
     </script>
 </body>
+
 </html>
