@@ -101,6 +101,37 @@
         return EMPTY_VALUE;
     }
 
+    function getPath(object, path) {
+        var parts = path.split(".");
+        var current = object;
+        var index;
+
+        for (index = 0; index < parts.length; index += 1) {
+            if (current === undefined || current === null) {
+                return undefined;
+            }
+
+            current = current[parts[index]];
+        }
+
+        return current;
+    }
+
+    function firstPath(object, paths) {
+        var index;
+        var value;
+
+        for (index = 0; index < paths.length; index += 1) {
+            value = getPath(object, paths[index]);
+
+            if (value !== undefined && value !== null && String(value).trim() !== "") {
+                return value;
+            }
+        }
+
+        return undefined;
+    }
+
     function parseMoney(value) {
         var text = normalizeValue(value);
         var cleaned;
@@ -153,6 +184,59 @@
         var suffix = template && template.suffix ? template.suffix : "";
 
         return sign + prefix + absolute + suffix;
+    }
+
+    function formatProviderMoney(value, currency) {
+        var numberValue;
+
+        if (value === undefined || value === null || value === "") {
+            return EMPTY_VALUE;
+        }
+
+        if (typeof value === "string" && /[^\d.,-]/.test(value)) {
+            return value;
+        }
+
+        numberValue = Number(value);
+
+        if (!isFinite(numberValue)) {
+            return normalizeValue(value);
+        }
+
+        if (Math.abs(numberValue) >= 100 && Math.round(numberValue) === numberValue) {
+            numberValue = numberValue / 100;
+        }
+
+        try {
+            return new Intl.NumberFormat("en", {
+                currency: currency || "USD",
+                style: "currency"
+            }).format(numberValue);
+        } catch (error) {
+            return numberValue.toFixed(2);
+        }
+    }
+
+    function formatProviderDate(value) {
+        var date;
+
+        if (!value) {
+            return EMPTY_VALUE;
+        }
+
+        date = new Date(value);
+
+        if (isNaN(date.getTime())) {
+            return normalizeValue(value);
+        }
+
+        return date.toLocaleString("en", {
+            day: "2-digit",
+            hour: "2-digit",
+            hour12: false,
+            minute: "2-digit",
+            month: "short"
+        }).toUpperCase().replace(",", " \u2022");
     }
 
     function normalizeDiscount(value) {
@@ -289,6 +373,133 @@
         receipt.hasDiscount = discountIsVisible(receipt.discount);
 
         return receipt;
+    }
+
+    function unwrapProviderPayload(payload) {
+        return payload && (payload.receipt || payload.transaction || payload.order || payload.data || payload);
+    }
+
+    function currencyFromProvider(payload) {
+        return firstPath(payload, [
+            "currencyCode",
+            "currency_code",
+            "currency",
+            "details.totals.currency_code",
+            "details.line_items.0.price.unit_price.currency_code",
+            "items.0.price.unit_price.currency_code"
+        ]) || "USD";
+    }
+
+    function cardBrandFromProvider(payload) {
+        return firstPath(payload, [
+            "cardBrand",
+            "card_brand",
+            "payment.method_details.card.type",
+            "payment.method_details.card.brand",
+            "payment.card.brand",
+            "payments.0.card.type",
+            "payments.0.card.brand",
+            "payments.0.method_details.card.type",
+            "payments.0.method_details.card.brand",
+            "details.payments.0.card.type",
+            "details.payments.0.card.brand",
+            "details.payments.0.method_details.card.type",
+            "details.payments.0.method_details.card.brand"
+        ]);
+    }
+
+    function cardLast4FromProvider(payload) {
+        return firstPath(payload, [
+            "cardLast4",
+            "card_last4",
+            "last4",
+            "last_four",
+            "payment.method_details.card.last4",
+            "payment.card.last4",
+            "payments.0.card.last4",
+            "payments.0.method_details.card.last4",
+            "details.payments.0.card.last4",
+            "details.payments.0.method_details.card.last4"
+        ]);
+    }
+
+    function fromProviderPayload(payload, options) {
+        var source = unwrapProviderPayload(payload) || {};
+        var currency = currencyFromProvider(source);
+        var fallbackOrderId = options && options.orderId;
+        var lineItem = getPath(source, "details.line_items.0") || getPath(source, "items.0") || {};
+
+        return normalize({
+            itemTitle: firstPath(source, [
+                "itemTitle",
+                "item_title",
+                "product.name",
+                "items.0.product.name",
+                "items.0.price.name",
+                "details.line_items.0.product.name",
+                "details.line_items.0.price.name"
+            ]) || firstPath(lineItem, ["product.name", "price.name", "name"]),
+            itemDescription: firstPath(source, [
+                "itemDescription",
+                "item_description",
+                "description",
+                "product.description",
+                "items.0.product.description",
+                "details.line_items.0.product.description"
+            ]) || firstPath(lineItem, ["product.description", "description"]),
+            itemPrice: formatProviderMoney(firstPath(source, [
+                "itemPrice",
+                "item_price",
+                "subtotal",
+                "details.totals.subtotal",
+                "totals.subtotal"
+            ]) || firstPath(lineItem, ["totals.subtotal", "total", "price.unit_price.amount"]), currency),
+            priceTax: formatProviderMoney(firstPath(source, [
+                "priceTax",
+                "price_tax",
+                "tax",
+                "details.totals.tax",
+                "totals.tax"
+            ]), currency),
+            discount: formatProviderMoney(firstPath(source, [
+                "discount",
+                "discountAmount",
+                "discount_amount",
+                "details.totals.discount",
+                "totals.discount"
+            ]), currency),
+            priceTotal: formatProviderMoney(firstPath(source, [
+                "priceTotal",
+                "price_total",
+                "total",
+                "details.totals.total",
+                "totals.total"
+            ]), currency),
+            orderId: firstPath(source, [
+                "orderId",
+                "order_id",
+                "transactionId",
+                "transaction_id",
+                "id"
+            ]) || fallbackOrderId,
+            paymentMethod: firstPath(source, [
+                "paymentMethod",
+                "payment_method",
+                "paidWith",
+                "paid_with"
+            ]),
+            cardBrand: cardBrandFromProvider(source),
+            cardLast4: cardLast4FromProvider(source),
+            purchaseDate: formatProviderDate(firstPath(source, [
+                "purchaseDate",
+                "purchase_date",
+                "completed_at",
+                "billed_at",
+                "created_at",
+                "createdAt",
+                "updated_at"
+            ]))
+        });
     }
 
     function resolveElement(target) {
@@ -686,6 +897,7 @@
     return {
         collect: collect,
         createMarkup: createMarkup,
+        fromProviderPayload: fromProviderPayload,
         mount: mount,
         normalize: normalize,
         printFromCheckout: printFromCheckout,
